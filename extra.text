@@ -1,0 +1,65 @@
+{
+	
+	"fullName":"shahid rahman",
+     "email":"shahid@gmail.com",
+    "address":"islamabad",
+     "phoneNo":"03075462469",
+     "gender":"male",
+    "password":"123",
+     "accountType":"renter",
+     "cnicNo":"3740134549345",
+	 "userImage":"5cd9018cc666be370048481c"
+}
+{
+    "_id": "5d09b4ff9230511b48dffc20",
+    "name": "Ford",
+    "model": "1990",
+    "vehicleNo": "RIM-3034",
+    "fuelType": "Gas",
+    "type": "Wagon",
+    "colour": "blue",
+    "seatCapacity": 16,
+    "vehicleImages": "5d087006dd14922dd4009ef5",
+    "__v": 0
+}
+<------------------->
+// router.post("/", (req, res) => {
+//   upload(req, res, err => {
+//     // console.log(req.file.size);
+//     if (err instanceof multer.MulterError) {
+//       return res.status(500).json(err);
+//     } else if (err) {
+//       return res.status(500).json(err);
+//     }
+//     // var image = new Image();
+//     // image.image.data = fs.readFileSync(req.file.path);
+//     // image.image.contentType = "image/jpeg"; // or 'image/png'
+//     // image.save();
+//     // res.json({ message: "New image added to the db!" });
+
+//     var image = new Image({
+//       image: {
+//         data: fs.readFileSync(req.file.path),
+//         contentType: "image/jpeg"
+//       }
+//     });
+//     image.save();
+//     res.json({ message: "New image added to the db!" });
+//     // const result = image.save();
+//     // return res.status(200).send({ _id: result._id });
+//   });
+// });
+<--------------------------------->
+router.post("/", upload.single("file"), async (req, res, err) => {
+  const image = new UserImage({
+    image: {
+      data: fs.readFileSync(req.file.path),
+      contentType: "image/jpeg"
+    }
+  });
+  const result = await image.save();
+  console.log(result._id);
+  res.status(200).send(result._id);
+});
+
+<--------------------------------->

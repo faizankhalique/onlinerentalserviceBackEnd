@@ -1,0 +1,7 @@
+{
+  "name": "online-rental-service",
+  "port": 8000,
+  "DataBase_Name": "online-rental-service",
+  "jwtPrivateKey": "12345",
+  "authorization": false
+}

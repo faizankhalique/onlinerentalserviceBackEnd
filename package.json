@@ -1,0 +1,35 @@
+{
+  "name": "Online-Rental-Service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Node.js"
+  ],
+  "author": "Faizan khalique",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^3.0.4",
+    "compression": "^1.7.4",
+    "config": "^3.0.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
+    "express-async-errors": "^3.1.1",
+    "fawn": "^2.1.5",
+    "helmet": "^3.16.0",
+    "joi": "^14.3.1",
+    "joi-objectid": "^2.0.0",
+    "joi-password-complexity": "^2.0.1",
+    "jsonwebtoken": "^8.5.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "mongoose": "^5.4.14",
+    "multer": "^1.4.1",
+    "nodemailer": "^6.2.1",
+    "winston": "^2.4.0",
+    "winston-mongodb": "^4.0.3"
+  }
+}
