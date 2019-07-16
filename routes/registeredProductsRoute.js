@@ -8,6 +8,24 @@ router.get("/", async (req, res) => {
   const result = await RegisteredProduct.find().populate("owner");
   res.status(200).send(result);
 });
+router.get("/all", async (req, res) => {
+  const ownerDetails = await RegisteredProduct.find()
+    .populate({
+      path: "owner"
+      // match: { age: { $gte: 21 }},
+      // Explicitly exclude `_id`, see http://bit.ly/2aEfTdB
+      // select: "fullName  -_id"
+      // options: { limit: 5 }
+    })
+    .populate({
+      path: "vehicles",
+      // Get vehicles of vehicless - populate the 'vehicles' array for every vehicle
+      populate: { path: "vehicles" }
+    });
+  // console.log(ownerDetails[0].owner);
+  // console.log(ownerDetails[0].vehicles);
+  res.status(200).send(ownerDetails);
+});
 router.post("/addvehicle", async (req, res) => {
   const body = req.body;
   const ownerId = body.ownerId;

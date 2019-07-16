@@ -6,6 +6,7 @@ const productImages = require("../routes/productImagesRoute");
 const vehicles = require("../routes/vehicleRoute");
 const vehicleRequest = require("../routes/vehicleRequestRoute");
 const registertedProduct = require("../routes/registeredProductsRoute");
+const vehicleRentRequest = require("../routes/vehicleRentRequestRoute");
 const email = require("../routes/sendEmailRoute");
 const auth = require("../routes/authRoute");
 const errors = require("../middleware/errors");
@@ -17,6 +18,7 @@ module.exports = function(app) {
   app.use("/api/userimages", userImage);
   app.use("/api/vehiclerequest", vehicleRequest);
   app.use("/api/registerdproducts", registertedProduct);
+  app.use("/api/vehiclerentrequest", vehicleRentRequest);
   app.use("/api/sendemail", email);
   app.use("/api/productimages", productImages);
   app.use(errors);
