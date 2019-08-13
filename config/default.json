@@ -3,5 +3,7 @@
   "port": 8000,
   "DataBase_Name": "online-rental-service",
   "jwtPrivateKey": "12345",
+  "userImagesPath": "F:/8th semester/FYP/Online Rental Service/router-app/public/images/userimages",
+  "productImagesPath": "F:/8th semester/FYP/Online Rental Service/router-app/public/images/productimages",
   "authorization": false
 }

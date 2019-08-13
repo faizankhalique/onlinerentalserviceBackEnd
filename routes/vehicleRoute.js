@@ -4,7 +4,7 @@ const _ = require("lodash");
 const { Vehicle, validateVehicle } = require("../models/vehicle");
 const router = express.Router();
 router.get("/", async (req, res) => {
-  const vehicles = await Vehicle.find();
+  const vehicles = await Vehicle.find({ onRent: false });
   res.status(200).send(vehicles);
 });
 router.get("/vehiclesimages", async (req, res) => {
@@ -48,7 +48,7 @@ router.get("/:id", async (req, res) => {
   const valid = mongoose.Types.ObjectId.isValid(id);
   if (!valid) return res.status(400).send("Invalid Vehicle id");
   const vehicle = await Vehicle.findById(id);
-  console.log("vehicle", vehicle);
+
   if (!vehicle) return res.status(404).send("Vehicle Not Exist with this id");
   res.status(200).send(vehicle);
 });

@@ -14,13 +14,19 @@ const RegisteredProduct = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Vehicle"
       }
+    ],
+    houses: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "House"
+      }
+    ],
+    shops: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Shop"
+      }
     ]
-    // Houses:{
-    //     type:[new mongoose.Schema({})]
-    // },
-    // shops:{
-    //     type:[new mongoose.Schema({})]
-    // },
   })
 );
 function validateOwnerID(params) {

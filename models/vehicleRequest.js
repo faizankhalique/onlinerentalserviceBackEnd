@@ -84,11 +84,14 @@ const VehicleRequestSchema = new mongoose.Schema({
     default: "Not-Approved"
   },
   requestDate: {
-    type: Date,
-    default: new Date()
+    type: String,
+    default: new Date().toLocaleString()
   },
   ApprovedDate: {
-    type: Date
+    type: String
+  },
+  ApprovedTime: {
+    type: String
   }
 });
 const VehicleRequest = mongoose.model("VehicleRequest", VehicleRequestSchema);

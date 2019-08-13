@@ -8,7 +8,7 @@ const {
 const { Vehicle } = require("../models/vehicle");
 const router = express.Router();
 router.get("/", async (req, res) => {
-  const vehiclesRequests = await VehicleRequest.find({ status: "Not-Approved" })
+  const vehiclesRequests = await VehicleRequest.find()
     .populate("requester")
     .select();
   res.status(200).send(vehiclesRequests);
@@ -25,6 +25,17 @@ router.get("/:id", async (req, res) => {
   if (!vehicleRequest)
     return res.status(404).send("VehicleRequest Not Exist with this id");
   res.status(200).send(vehicleRequest);
+});
+router.get("/ownerequests/:id", async (req, res) => {
+  const ownerId = req.params.id;
+  const valid = mongoose.Types.ObjectId.isValid(ownerId);
+  if (!valid) return res.status(400).send("Invalid Prooduct_Owner id");
+  const vehicleRequests = await VehicleRequest.find({
+    requester: ownerId
+  });
+  if (!vehicleRequests)
+    return res.status(404).send("You have Not Submit any Vehicle Request");
+  res.status(200).send(vehicleRequests);
 });
 router.post("/", async (req, res) => {
   const body = req.body;
@@ -53,13 +64,12 @@ router.post("/", async (req, res) => {
 });
 router.put("/:id", async (req, res) => {
   const id = req.params.id;
-  console.log("id", id);
   let request = await VehicleRequest.findOne({ _id: id });
-  console.log(request);
   if (!request)
     return res.status(404).send("VehicleRequest with this id not Exist");
   request.status = "Approved";
-  request.ApprovedDate = new Date();
+  request.ApprovedDate = new Date().toLocaleString();
+  request.ApprovedTime = new Date().toLocaleTimeString();
   const result = await request.save();
   res.status(200).send(result);
 });

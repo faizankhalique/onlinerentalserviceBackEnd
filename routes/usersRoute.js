@@ -7,6 +7,7 @@ const {
   RegisteredProduct,
   validateOwnerID
 } = require("../models/registeredProducts");
+const { AllRegisteredRenters } = require("../models/allRegisterRenters");
 const auth = require("../middleware/auth");
 const router = express.Router();
 router.get("/", async (req, res) => {
@@ -52,6 +53,14 @@ router.post("/", async (req, res) => {
     });
     registeredProduct._id = result._id;
     const r = await registeredProduct.save();
+    console.log(r);
+  }
+  if (result.accountType === "renter") {
+    const allRegisterRenters = new AllRegisteredRenters({
+      renter: result._id
+    });
+    allRegisterRenters._id = result._id;
+    const r = await allRegisterRenters.save();
     console.log(r);
   }
   res

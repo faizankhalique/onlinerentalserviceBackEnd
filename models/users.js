@@ -64,6 +64,10 @@ const userSchema = new mongoose.Schema({
     trim: true,
     required: true
   },
+  registeredDate: {
+    type: String,
+    default: new Date().toLocaleString()
+  },
   userImage: {
     type: String,
     trim: true,
