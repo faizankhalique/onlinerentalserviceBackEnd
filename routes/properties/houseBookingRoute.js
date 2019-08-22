@@ -8,14 +8,17 @@ const {
 } = require("../../models/Properties/houseBooking");
 const { House } = require("../../models/Properties/house");
 router.get("/houseRentRequests", async (req, res) => {
-  const houseRentRequests = await HouseBooking.find()
+  const houseRentRequests = await HouseBooking.find({ status: "Approved" })
     .populate("renter")
     .populate("house")
     .populate("owner");
   res.status(200).send(houseRentRequests);
 });
 router.get("/houseRentRequest/:id", async (req, res) => {
-  const houseRentRequests = await HouseBooking.find().populate("house");
+  const renter = req.params.id;
+  const houseRentRequests = await HouseBooking.find({
+    renter: renter
+  }).populate("house");
   res.status(200).send(houseRentRequests);
 });
 router.get("/housebookings/:id", async (req, res) => {
@@ -69,8 +72,6 @@ router.put("/:id", async (req, res) => {
   const houseBooking = await HouseBooking.findByIdAndUpdate(
     { _id: _id },
     {
-      security: body.security,
-      rent: body.rent,
       startDate: body.startDate,
       endDate: body.endDate,
       bookingDate: new Date().toLocaleDateString(),
@@ -101,5 +102,10 @@ router.delete("/:id", async (req, res) => {
   if (!result)
     return res.status(404).send("HouseBooking Given by Id not found");
   res.status(200).send(result);
+});
+router.get("/:id", async (req, res) => {
+  const _id = req.params.id;
+  const houseBooking = await HouseBooking.findById(_id).populate("house");
+  res.status(200).send(houseBooking);
 });
 module.exports = router;

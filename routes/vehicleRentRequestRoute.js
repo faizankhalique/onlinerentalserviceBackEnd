@@ -1,12 +1,14 @@
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
+const { Vehicle } = require("../models/vehicle");
 const {
   VehicleRentRequest,
   validateVehicleRentRequest
 } = require("../models/vehicleRentRequest");
 const { VehicleBooking } = require("../models/vehicleBooking");
 const { RegisteredProduct } = require("../models/registeredProducts");
+const diff_days = require("../utils/diff_days");
 router.get("/", async (req, res) => {
   const vehicleRentRequests = await VehicleRentRequest.find()
     .populate("requester")
@@ -48,9 +50,7 @@ router.post("/", async (req, res) => {
   for (const registeredProduct of registeredProducts) {
     for (const vehicle of registeredProduct.vehicles) {
       if (vehicleId == vehicle) {
-        console.log("vehicle", vehicle);
         vehicleOwnerId = registeredProduct._id;
-        console.log("vehicleOwner", vehicleOwnerId);
       }
     }
   }
@@ -58,7 +58,6 @@ router.post("/", async (req, res) => {
     _.pick(body, [
       "requester",
       "vehicle",
-      "duration",
       "purpose",
       "licenseNo",
       "startDate",
@@ -78,7 +77,14 @@ router.put("/:id", async (req, res) => {
   request.status = "Approved";
   request.ApprovedDate = new Date().toLocaleDateString();
   request.ApprovedTime = new Date().toLocaleTimeString();
-  const result = await request.save();
+  await request.save();
+  const vehicle = await Vehicle.findById(body.vehicle._id);
+  const vehicleRent = vehicle.vehicleRent;
+  const endDate = new Date(body.endDate + ",00:00");
+  const startDate = new Date(body.startDate + ",00:00");
+  const days = diff_days(endDate, startDate) + 1;
+  const totalRent = days * vehicleRent;
+  const commission = parseInt(totalRent * 0.2);
   // after approved request add request into booking
   let vehicleBooking = new VehicleBooking({
     renter: body.requester._id,
@@ -86,9 +92,11 @@ router.put("/:id", async (req, res) => {
     vehicle: body.vehicle._id,
     purpose: body.purpose,
     startDate: body.startDate,
-    endDate: body.endDate
+    endDate: body.endDate,
+    rent: totalRent,
+    commission
   });
-  const result1 = await vehicleBooking.save();
-  res.status(200).send(result1);
+  const result = await vehicleBooking.save();
+  res.status(200).send(result);
 });
 module.exports = router;

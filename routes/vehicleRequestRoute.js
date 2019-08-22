@@ -19,9 +19,8 @@ router.get("/:id", async (req, res) => {
   if (!valid) return res.status(400).send("Invalid VehicleRequest id");
   const vehicleRequest = await VehicleRequest.findOne({
     _id: id,
-    status: "Not-Approved"
+    status: "Pending"
   });
-  console.log("vehicleRequest", vehicleRequest);
   if (!vehicleRequest)
     return res.status(404).send("VehicleRequest Not Exist with this id");
   res.status(200).send(vehicleRequest);

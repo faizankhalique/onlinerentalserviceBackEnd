@@ -22,6 +22,14 @@ router.get("/:id", async (req, res) => {
 
   res.status(200).send(vehiclebookings);
 });
+router.get("/vehiclebooking/:id", async (req, res) => {
+  const _id = req.params.id;
+  const vehiclebooking = await VehicleBooking.findById(_id)
+    .populate({ path: "vehicle" })
+    .populate({ path: "owner" });
+  if (!vehiclebooking) return res.status(404).send("vehicle booking Not found");
+  res.status(200).send(vehiclebooking);
+});
 router.put("/:id", async (req, res) => {
   const _id = req.params.id;
   const body = req.body;
@@ -34,8 +42,7 @@ router.put("/:id", async (req, res) => {
       rent: body.rent,
       startDate: body.startDate,
       endDate: body.endDate,
-      startTime: body.startTime,
-      endTime: body.startTime,
+      commission: body.commission,
       bookingDate: new Date().toLocaleDateString(),
       bookingConfirmation: "Confirm"
     }

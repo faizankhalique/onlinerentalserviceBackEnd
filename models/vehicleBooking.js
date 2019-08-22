@@ -23,13 +23,18 @@ const vehicleBookingSchema = new mongoose.Schema({
   },
   security: {
     type: Number,
-    min: 1,
-    default: 1
+    min: 0,
+    default: 0
   },
   rent: {
     type: Number,
-    min: 1,
-    default: 1
+    min: 0,
+    default: 0
+  },
+  commission: {
+    type: Number,
+    min: 0,
+    default: 0
   },
   startDate: {
     type: String,
@@ -39,18 +44,13 @@ const vehicleBookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  startTime: {
-    type: String
-  },
-  endTime: {
-    type: String
-  },
+
   bookingDate: {
     type: String
   },
   bookingConfirmation: {
     type: String,
-    default: "Not-Confirm"
+    default: "Pending"
   }
 });
 const VehicleBooking = mongoose.model("VehicleBooking", vehicleBookingSchema);
@@ -60,11 +60,10 @@ function validateVehicleBooking(vehicleBooking) {
     owner: Joi.objectId().required(),
     vehicle: Joi.objectId().required(),
     purpose: Joi.string().required(),
-    security: Joi.number().min(1),
-    rent: Joi.number().min(1),
+    security: Joi.number().min(0),
+    rent: Joi.number().min(0),
     startDate: Joi.string().required(),
-    startTime: Joi.string(),
-    endTime: Joi.string(),
+
     endDate: Joi.string().required()
   };
   return Joi.validate(vehicleBooking, schema);

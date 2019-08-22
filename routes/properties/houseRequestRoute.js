@@ -64,7 +64,6 @@ router.put("/updatehouserequest/:id", async (req, res) => {
   let house = await House.findById(_id);
   if (!house) return res.status(404).send("House Given by Id not found");
   if (JSON.stringify(house.houseImages) != JSON.stringify(body.houseImages)) {
-    console.log("not equal");
     for (const image of house.houseImages) {
       let path =
         "F:/8th semester/FYP/Online Rental Service/router-app/public" +

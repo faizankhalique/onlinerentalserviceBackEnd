@@ -16,10 +16,7 @@ const vehicleRentRequestSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User"
   },
-  duration: {
-    type: String,
-    required: true
-  },
+
   purpose: {
     type: String,
     required: true
@@ -38,7 +35,7 @@ const vehicleRentRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Not-Approved"
+    default: "Pending"
   },
   requestDate: {
     type: String,
@@ -63,7 +60,7 @@ function validateVehicleRentRequest(params) {
   const schema = {
     requester: Joi.objectId().required(),
     vehicle: Joi.objectId().required(),
-    duration: Joi.string().required(),
+
     purpose: Joi.string().required(),
     licenseNo: Joi.string().required(),
     startDate: Joi.string().required(),

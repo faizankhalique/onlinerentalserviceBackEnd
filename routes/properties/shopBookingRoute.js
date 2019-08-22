@@ -8,7 +8,7 @@ const {
 } = require("../../models/Properties/shopBooking");
 const { Shop } = require("../../models/Properties/shop");
 router.get("/shoprentrequests", async (req, res) => {
-  const shopRentRequests = await ShopBooking.find()
+  const shopRentRequests = await ShopBooking.find({ status: "Approved" })
     .populate("renter")
     .populate("shop")
     .populate("owner");
@@ -69,8 +69,6 @@ router.put("/:id", async (req, res) => {
   const shopBooking = await ShopBooking.findByIdAndUpdate(
     { _id: _id },
     {
-      security: body.security,
-      rent: body.rent,
       startDate: body.startDate,
       endDate: body.endDate,
       bookingDate: new Date().toLocaleDateString(),
@@ -97,5 +95,10 @@ router.delete("/:id", async (req, res) => {
   const result = await ShopBooking.findByIdAndDelete(_id);
   if (!result) return res.status(404).send("ShopBooking Given by Id not found");
   res.status(200).send(result);
+});
+router.get("/:id", async (req, res) => {
+  const _id = req.params.id;
+  const shopBooking = await ShopBooking.findById(_id).populate("shop");
+  res.status(200).send(shopBooking);
 });
 module.exports = router;

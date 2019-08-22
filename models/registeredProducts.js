@@ -26,6 +26,12 @@ const RegisteredProduct = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "Shop"
       }
+    ],
+    tools: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tool"
+      }
     ]
   })
 );

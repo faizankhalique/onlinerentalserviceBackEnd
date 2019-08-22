@@ -21,16 +21,6 @@ const shopBookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  security: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  rent: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
   startDate: {
     type: String,
     required: true
@@ -72,8 +62,6 @@ function validateShopBooking(shopBooking) {
     owner: Joi.objectId(),
     shop: Joi.objectId().required(),
     purpose: Joi.string().required(),
-    security: Joi.number().min(1),
-    rent: Joi.number().min(1),
     endDate: Joi.string().required(),
     startDate: Joi.string().required()
   };

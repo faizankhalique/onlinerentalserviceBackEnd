@@ -26,13 +26,51 @@ const AllRegisteredRenters = mongoose.model(
         type: mongoose.Schema.Types.ObjectId,
         ref: "ShopBooking"
       }
+    ],
+    toolsBookings: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ToolBooking"
+      }
+    ],
+    housePayments: [
+      {
+        houseBooking: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "HouseBooking"
+        },
+        security: {
+          type: Number
+        },
+        rents: [
+          {
+            month: { type: String },
+            rent: { type: Number },
+            commission: { type: Number },
+            date: { type: String }
+          }
+        ]
+      }
+    ],
+    shopPayments: [
+      {
+        shopBooking: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "ShopBooking"
+        },
+        security: {
+          type: Number
+        },
+        rents: [
+          {
+            month: { type: String },
+            rent: { type: Number },
+            commission: { type: Number },
+            date: { type: String }
+          }
+        ]
+      }
     ]
-    // toolsBookings: [
-    //   {
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "ToolBooking"
-    //   }
-    // ]
   })
 );
 function validateRenterID(params) {

@@ -29,6 +29,10 @@ router.get("/all", async (req, res) => {
     .populate({
       path: "shops",
       populate: { path: "shops" }
+    })
+    .populate({
+      path: "tools",
+      populate: { path: "tools" }
     });
   // console.log(ownerDetails[0].owner);
   // console.log(ownerDetails[0].vehicles);
@@ -50,6 +54,11 @@ router.get("/:id", async (req, res) => {
       path: "vehicles",
       // Get vehicles of vehicless - populate the 'vehicles' array for every vehicle
       populate: { path: "vehicles" }
+    })
+    .populate({
+      path: "tools",
+      // Get vehicles of vehicless - populate the 'vehicles' array for every vehicle
+      populate: { path: "tools" }
     });
   if (!ownerDetails)
     return res.status(404).send("Product_Owner Details not found");
@@ -98,6 +107,16 @@ router.get("/ownershops/:id", async (req, res) => {
 
   res.status(200).send(ownerShops.shops);
 });
+router.get("/ownertools/:id", async (req, res) => {
+  const id = req.params.id;
+  const ownerTools = await RegisteredProduct.findById(id).populate({
+    path: "tools",
+    populate: { path: "tools" }
+  });
+  if (!ownerTools) return res.status(404).send(" Tool Owner Details not found");
+
+  res.status(200).send(ownerTools.tools);
+});
 router.post("/addvehicle", async (req, res) => {
   const body = req.body;
   const ownerId = body.ownerId;
@@ -142,6 +161,18 @@ router.post("/addshop", async (req, res) => {
   }).select("shops");
   if (!owner) return res.status(200).send("Invalid Owner Id");
   owner.shops.push(shopId);
+  const result = await owner.save();
+  res.status(200).send("result");
+});
+router.post("/addtool", async (req, res) => {
+  const body = req.body;
+  const ownerId = body.ownerId.trim();
+  const toolId = body.toolId.trim();
+  const owner = await RegisteredProduct.findOne({
+    _id: ownerId
+  }).select("tools");
+  if (!owner) return res.status(200).send("Invalid Owner Id");
+  owner.tools.push(toolId);
   const result = await owner.save();
   res.status(200).send("result");
 });

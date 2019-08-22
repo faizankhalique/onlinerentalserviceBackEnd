@@ -81,7 +81,7 @@ const VehicleRequestSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "Not-Approved"
+    default: "Pending"
   },
   requestDate: {
     type: String,
