@@ -21,21 +21,7 @@ const toolBookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  security: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  rent: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  commission: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
+
   startDate: {
     type: String,
     required: true
@@ -46,10 +32,6 @@ const toolBookingSchema = new mongoose.Schema({
   },
   bookingDate: {
     type: String
-  },
-  bookingConfirmation: {
-    type: String,
-    default: "Pending"
   },
   status: {
     type: String,
@@ -68,6 +50,19 @@ const toolBookingSchema = new mongoose.Schema({
   },
   ApprovedTime: {
     type: String
+  },
+  bookingStatus: {
+    type: String,
+    default: "Pending"
+  },
+  payment: {
+    totalDays: { type: Number, default: 0 },
+    totalRent: { type: Number, default: 0 },
+    commission: { type: Number, default: 0 },
+    ownerRent: { type: Number, default: 0 },
+    security: { type: Number, default: 0 },
+    paidToOwnerDate: { type: String },
+    paidToOwnerStatus: { type: Boolean, default: false }
   }
 });
 const ToolBooking = mongoose.model("ToolBooking", toolBookingSchema);

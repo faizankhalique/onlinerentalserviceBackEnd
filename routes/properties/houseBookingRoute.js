@@ -1,6 +1,8 @@
 const express = require("express");
 const router = express.Router();
 const _ = require("lodash");
+const diff_months = require("../../utils/diff_months");
+const getDays = require("../../utils/getDays");
 const { RegisteredProduct } = require("../../models/registeredProducts");
 const {
   HouseBooking,
@@ -8,7 +10,7 @@ const {
 } = require("../../models/Properties/houseBooking");
 const { House } = require("../../models/Properties/house");
 router.get("/houseRentRequests", async (req, res) => {
-  const houseRentRequests = await HouseBooking.find({ status: "Approved" })
+  const houseRentRequests = await HouseBooking.find()
     .populate("renter")
     .populate("house")
     .populate("owner");
@@ -18,15 +20,28 @@ router.get("/houseRentRequest/:id", async (req, res) => {
   const renter = req.params.id;
   const houseRentRequests = await HouseBooking.find({
     renter: renter
-  }).populate("house");
+  })
+    .populate("renter")
+    .populate("house")
+    .populate("owner");
+  res.status(200).send(houseRentRequests);
+});
+router.get("/housebookings", async (req, res) => {
+  const houseRentRequests = await HouseBooking.find({ status: "Approved" })
+    .populate("renter")
+    .populate("house")
+    .populate("owner");
   res.status(200).send(houseRentRequests);
 });
 router.get("/housebookings/:id", async (req, res) => {
   const renter = req.params.id;
   const houseRentRequests = await HouseBooking.find({
-    renter: renter,
-    bookingConfirmation: "Confirm"
-  }).populate("house");
+    renter: renter
+    // bookingStatus: "Confirm"
+  })
+    .populate("renter")
+    .populate("house")
+    .populate("owner");
   res.status(200).send(houseRentRequests);
 });
 router.post("/houseRentRequest", async (req, res) => {
@@ -36,10 +51,13 @@ router.post("/houseRentRequest", async (req, res) => {
   const { error } = validateHouseBooking(body);
   if (error) return res.status(400).send(error.details[0].message);
   let houseRentRequest = await HouseBooking.findOne({
-    renter: body.renter
+    renter: body.renter,
+    house: body.house
   });
   if (houseRentRequest)
-    return res.status(400).send("You have Already submit House Rent Request");
+    return res
+      .status(400)
+      .send("You have Already submit Same House Rent Request");
   const registeredProducts = await RegisteredProduct.find().select({
     houses: 1
   });
@@ -51,6 +69,16 @@ router.post("/houseRentRequest", async (req, res) => {
       }
     }
   }
+  const startDate = new Date(body.startDate + ",00:00");
+  const endDate = new Date(body.endDate + ".00:00");
+  let totalMonths = diff_months(endDate, startDate);
+  if (totalMonths == 0) {
+    totalMonths = 1;
+    const { firstDay, lastDay } = getDays(body.endDate);
+    console.log(firstDay, lastDay);
+    body.startDate = firstDay;
+    body.endDate = lastDay;
+  }
   houseRentRequest = new HouseBooking(
     _.pick(body, [
       "renter",
@@ -61,28 +89,65 @@ router.post("/houseRentRequest", async (req, res) => {
       "endDate"
     ])
   );
+  houseRentRequest.totalMonths = totalMonths;
   houseRentRequest.owner = ownerId;
   const result = await houseRentRequest.save();
+  res.status(200).send(result);
+});
+router.put("/confirmbooking/:id", async (req, res) => {
+  const _id = req.params.id;
+  const houseBooking = await HouseBooking.findByIdAndUpdate(
+    { _id: _id },
+    {
+      bookingDate: new Date().toLocaleDateString(),
+      bookingStatus: "Confirm"
+    }
+  );
+  await House.findByIdAndUpdate(
+    { _id: houseBooking.house._id },
+    { onRent: true }
+  );
+  const result = await houseBooking.save();
   res.status(200).send(result);
 });
 router.put("/:id", async (req, res) => {
   const _id = req.params.id;
   const body = req.body;
-
-  const houseBooking = await HouseBooking.findByIdAndUpdate(
-    { _id: _id },
-    {
-      startDate: body.startDate,
-      endDate: body.endDate,
-      bookingDate: new Date().toLocaleDateString(),
-      bookingConfirmation: "Confirm"
-    }
-  );
+  const houseBooking = await HouseBooking.findById(_id);
+  (houseBooking.startDate = body.startDate),
+    (houseBooking.endDate = body.endDate);
+  (houseBooking.totalMonths = body.totalMonths),
+    (houseBooking.security = body.security),
+    houseBooking.payments.push({
+      currentMonth: body.currentMonth,
+      monthlyRent: body.monthlyRent,
+      monthlyCommission: body.monthlyCommission,
+      ownerMonthlyRent: body.ownerMonthlyRent,
+      paidToOwnerDate: "",
+      paidToOwnerStatus: false,
+      paymentDate: new Date().toLocaleDateString()
+    });
+  if (body.bookingStatus == "Complete") {
+    houseBooking.bookingStatus = body.bookingStatus;
+    await House.findByIdAndUpdate(body.houseId, {
+      onRent: false
+    });
+  }
   const result = await houseBooking.save();
-  await House.findByIdAndUpdate(
-    { _id: houseBooking.house._id },
-    { onRent: true }
-  );
+
+  res.status(200).send(result);
+});
+router.put("/updatepayment/:id", async (req, res) => {
+  const _id = req.params.id;
+  const paymentId = req.body.paymentId;
+  const houseBooking = await HouseBooking.findById(_id);
+  for (const payment of houseBooking.payments) {
+    if (paymentId == payment._id) {
+      payment.paidToOwnerDate = new Date().toLocaleDateString();
+      payment.paidToOwnerStatus = true;
+    }
+  }
+  const result = await houseBooking.save();
   res.status(200).send(result);
 });
 router.put("/approvedrentrequest/:id", async (req, res) => {

@@ -21,21 +21,7 @@ const vehicleBookingSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  security: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  rent: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  commission: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
+
   startDate: {
     type: String,
     required: true
@@ -48,9 +34,18 @@ const vehicleBookingSchema = new mongoose.Schema({
   bookingDate: {
     type: String
   },
-  bookingConfirmation: {
+  bookingStatus: {
     type: String,
     default: "Pending"
+  },
+  payment: {
+    totalDays: { type: Number, default: 0 },
+    totalRent: { type: Number, default: 0 },
+    commission: { type: Number, default: 0 },
+    ownerRent: { type: Number, default: 0 },
+    security: { type: Number, default: 0 },
+    paidToOwnerDate: { type: String },
+    paidToOwnerStatus: { type: Boolean, default: false }
   }
 });
 const VehicleBooking = mongoose.model("VehicleBooking", vehicleBookingSchema);

@@ -32,7 +32,7 @@ const shopBookingSchema = new mongoose.Schema({
   bookingDate: {
     type: String
   },
-  bookingConfirmation: {
+  bookingStatus: {
     type: String,
     default: "Pending"
   },
@@ -53,7 +53,20 @@ const shopBookingSchema = new mongoose.Schema({
   },
   ApprovedTime: {
     type: String
-  }
+  },
+  totalMonths: { type: Number, default: 0 },
+  security: { type: Number, default: 0 },
+  payments: [
+    {
+      currentMonth: { type: Number, default: 0 },
+      monthlyRent: { type: Number, default: 0 },
+      monthlyCommission: { type: Number, default: 0 },
+      ownerMonthlyRent: { type: Number, default: 0 },
+      paidToOwnerDate: { type: String },
+      paidToOwnerStatus: { type: Boolean, default: false },
+      paymentDate: { type: String }
+    }
+  ]
 });
 const ShopBooking = mongoose.model("ShopBooking", shopBookingSchema);
 function validateShopBooking(shopBooking) {

@@ -39,10 +39,13 @@ router.post("/", async (req, res) => {
   const { error } = validateVehicleRentRequest(body);
   if (error) return res.status(400).send(error.details[0].message);
   let vehicleRentRequest = await VehicleRentRequest.findOne({
-    requester: body.requester
+    requester: body.requester,
+    vehicle: body.vehicle
   });
   if (vehicleRentRequest)
-    return res.status(400).send("You have Already submit Vehicle Rent Request");
+    return res
+      .status(400)
+      .send("You have Already submit Same Vehicle Rent Request");
   const registeredProducts = await RegisteredProduct.find().select({
     vehicles: 1
   });
@@ -85,6 +88,7 @@ router.put("/:id", async (req, res) => {
   const days = diff_days(endDate, startDate) + 1;
   const totalRent = days * vehicleRent;
   const commission = parseInt(totalRent * 0.2);
+  const ownerRent = totalRent - commission;
   // after approved request add request into booking
   let vehicleBooking = new VehicleBooking({
     renter: body.requester._id,
@@ -93,10 +97,20 @@ router.put("/:id", async (req, res) => {
     purpose: body.purpose,
     startDate: body.startDate,
     endDate: body.endDate,
-    rent: totalRent,
-    commission
+    payment: {
+      totalDays: days,
+      totalRent,
+      commission,
+      ownerRent
+    }
   });
   const result = await vehicleBooking.save();
+  res.status(200).send(result);
+});
+router.delete("/:id", async (req, res) => {
+  const _id = req.params.id;
+  const result = await VehicleRentRequest.findByIdAndDelete(_id);
+  if (!result) return res.status(404).send("Vehicle Rent Request Not found");
   res.status(200).send(result);
 });
 module.exports = router;

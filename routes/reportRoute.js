@@ -113,6 +113,10 @@ router.get("/allmonthsprofits", async (req, res) => {
     });
   let allMonthsProfits = [];
   let totalProfit = 0;
+  let vehiclesProfit = 0;
+  let housesProfit = 0;
+  let shopsProfit = 0;
+  let toolsProfit = 0;
   let l = [
     "Jan",
     "Feb",
@@ -133,32 +137,50 @@ router.get("/allmonthsprofits", async (req, res) => {
     for (const renterDetail of renterDetails) {
       for (const vehicleBooking of renterDetail.vehiclesBookings) {
         let month = new Date(vehicleBooking.bookingDate).getMonth() + 1;
-        if (month === index) profit = profit + vehicleBooking.commission;
+        if (month === index) {
+          profit = profit + vehicleBooking.payment.commission;
+          vehiclesProfit = vehiclesProfit + vehicleBooking.payment.commission;
+        }
       }
       //<-------------------------->
       for (const toolBooking of renterDetail.toolsBookings) {
         let month = new Date(toolBooking.bookingDate).getMonth() + 1;
-        if (month === index) profit = profit + toolBooking.commission;
+        if (month === index) {
+          profit = profit + toolBooking.payment.commission;
+          toolsProfit = toolsProfit + toolBooking.payment.commission;
+        }
       }
       //<-------------------->
-      for (const housePayment of renterDetail.housePayments) {
-        for (const rent of housePayment.rents) {
-          let month = new Date(rent.date).getMonth() + 1;
-          if (month === index) profit = profit + rent.commission;
+      for (const houseBooking of renterDetail.housesBookings) {
+        for (const payment of houseBooking.payments) {
+          let month = new Date(payment.paymentDate).getMonth() + 1;
+          if (month === index) {
+            profit = profit + payment.monthlyCommission;
+            housesProfit = housesProfit + payment.monthlyCommission;
+          }
         }
       }
       //<----------------------->
-      for (const shopPayment of renterDetail.shopPayments) {
-        for (const rent of shopPayment.rents) {
-          let month = new Date(rent.date).getMonth() + 1;
-          if (month === index) profit = profit + rent.commission;
+      for (const shopBooking of renterDetail.shopsBookings) {
+        for (const payment of shopBooking.payments) {
+          let month = new Date(payment.paymentDate).getMonth() + 1;
+          if (month === index) {
+            profit = profit + payment.monthlyCommission;
+            shopsProfit = shopsProfit + payment.monthlyCommission;
+          }
         }
       }
     }
     allMonthsProfits.push({ label: l[index - 1], y: profit });
     totalProfit = totalProfit + profit;
   }
-
-  res.status(200).send({ allMonthsProfits, totalProfit });
+  res.status(200).send({
+    allMonthsProfits,
+    totalProfit,
+    vehiclesProfit,
+    housesProfit,
+    shopsProfit,
+    toolsProfit
+  });
 });
 module.exports = router;
