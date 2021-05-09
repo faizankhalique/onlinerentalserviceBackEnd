@@ -27,7 +27,7 @@
     "joi-objectid": "^2.0.0",
     "joi-password-complexity": "^2.0.1",
     "jsonwebtoken": "^8.5.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.21",
     "moment": "^2.24.0",
     "mongoose": "^5.4.14",
     "multer": "^1.4.1",
